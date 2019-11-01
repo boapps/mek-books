@@ -67,26 +67,36 @@ Future<List<Book>> searchDB(String search) async {
 
   for (String l in data.split("<tr>")) {
     if (l.toLowerCase().contains(search)&&n>2) {
-      int id = int.parse(l.substring(50, 55));
-      String bUrl = l.substring(14, 45);
-      String author = l.split("<td>")[2].replaceAll("<\/td>", "").trim();
-      String title = l.split("<td>")[3].replaceAll("<\/td>", "").trim();
-      List<String> types = l.split("<td>")[4].replaceAll("<\/td>", "").replaceFirst("|","").split("|");
-      types = types.map((String type)=>type.trim()).toList();
-      List<String> themes = l.split("<td>")[5].replaceAll("<\/td>", "").replaceFirst("|","").split("|");
-      themes = themes.map((String theme)=>theme.trim()).toList();
-      List<String> tags =l.split("<td>")[6].replaceAll("<\/td>", "").replaceFirst("|","").split("|");
-      tags = tags.map((String tag)=>tag.trim()).toList();
-      List<String> languages = l.split("<td>")[7].replaceAll("<\/td>", "").replaceFirst("|","").split("|");
-      languages = languages.map((String language)=>language.trim()).toList();
-      List<String> formats = l.split("<td>")[8].replaceAll("<\/td>", "").replaceFirst("|","").split("|");
-      formats = formats.map((String format)=>format.trim()).toList();
-      formats.remove("PV");
-      formats.remove("PVU");
-      String date = l.split("<td>")[9].replaceAll("<\/td>", "").replaceAll("<\/tr>", "").trim();
-      Book book = new Book(id, bUrl, author, title, types, themes, tags, languages, formats, date);
+      try {
+        int urlStart = l.indexOf("<a href=") + "<a href=".length;
+        int urlEnd = l.indexOf(">", urlStart);
+        String bUrl = l.substring(urlStart, urlEnd);
 
-      results.add(book);
+        int idStart = l.indexOf("MEK-") + "MEK-".length;
+        int idEnd = l.indexOf("</a>", idStart);
+        int id = int.parse(l.substring(idStart, idEnd));
+
+        String author = l.split("<td>")[2].replaceAll("<\/td>", "").trim();
+        String title = l.split("<td>")[3].replaceAll("<\/td>", "").trim();
+        List<String> types = l.split("<td>")[4].replaceAll("<\/td>", "").replaceFirst("|","").split("|");
+        types = types.map((String type)=>type.trim()).toList();
+        List<String> themes = l.split("<td>")[5].replaceAll("<\/td>", "").replaceFirst("|","").split("|");
+        themes = themes.map((String theme)=>theme.trim()).toList();
+        List<String> tags =l.split("<td>")[6].replaceAll("<\/td>", "").replaceFirst("|","").split("|");
+        tags = tags.map((String tag)=>tag.trim()).toList();
+        List<String> languages = l.split("<td>")[7].replaceAll("<\/td>", "").replaceFirst("|","").split("|");
+        languages = languages.map((String language)=>language.trim()).toList();
+        List<String> formats = l.split("<td>")[8].replaceAll("<\/td>", "").replaceFirst("|","").split("|");
+        formats = formats.map((String format)=>format.trim()).toList();
+        formats.remove("PV");
+        formats.remove("PVU");
+        String date = l.split("<td>")[9].replaceAll("<\/td>", "").replaceAll("<\/tr>", "").trim();
+        Book book = new Book(id, bUrl, author, title, types, themes, tags, languages, formats, date);
+
+        results.add(book);
+      } catch (e) {
+        print(e);
+      }
     }
     n++;
   }

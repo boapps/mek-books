@@ -72,7 +72,7 @@ class DownloadManger {
     var linkTable = document.getElementsByClassName("bor01").first;
     for (var li in linkTable.querySelector("ol").children)
       if (li.querySelector("a") != null)
-        mp3Links.add(book.url.replaceFirst("http", "https") + "/mp3/" + li.querySelector("a").attributes["href"]);
+        mp3Links.add(book.url + "/mp3/" + li.querySelector("a").attributes["href"]);
     return mp3Links;
   }
 
@@ -103,7 +103,7 @@ class DownloadManger {
         }
       }
     } else {
-      String url = linkFromFormat(format, book).replaceFirst("http", "https");
+      String url = linkFromFormat(format, book);
       Map<PermissionGroup,
           PermissionStatus> permissions = await PermissionHandler()
           .requestPermissions([PermissionGroup.storage]);
